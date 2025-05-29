@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>「仲間を揃えろ！」対策プログラム</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 60px 60px 30px 60px 60px;
+            grid-template-rows: 60px 60px 60px;
+            gap: 5px;
+            width: 280px;
+            height: 200px;
+            margin: 20px auto;
+            align-items: center;
+            justify-content: center;
+        }
+        .panel {
+            border: 3px solid white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            width: 60px;
+            height: 60px;
+        }
+        .panel:nth-child(1) { grid-column: 2; grid-row: 1; }
+        .panel:nth-child(2) { grid-column: 4; grid-row: 1; }
+        .panel:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .panel:nth-child(4) { grid-column: 5; grid-row: 2; }
+        .panel:nth-child(5) { grid-column: 2; grid-row: 3; }
+        .panel:nth-child(6) { grid-column: 4; grid-row: 3; }
+        .panel:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+        .panel.red { background-color: #e74c3c; }
+        .panel.blue { background-color: #3498db; }
+        .panel.yellow { background-color: #f1c40f; }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        select {
+            margin: 5px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            color: #333;
+            width: 80px;
+        }
+        .select-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .select-row {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .select-row:nth-child(1) {
+            gap: 45px;
+        }
+        .select-row:nth-child(2) {
+            gap: 125px;
+        }
+        .select-row:nth-child(3) {
+            gap: 45px;
+        }
+        .button-row {
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(238, 90, 82, 0.4);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 90, 82, 0.6);
+        }
+        .result {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 100px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .no-solution {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+        }
+        .success {
+            color: #2ecc71;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 「仲間を揃えろ！」対策プログラム</h1>
+        
+        <div class="panel-grid">
+            <div class="panel blue" data-panel="1">①</div>
+            <div class="panel blue" data-panel="2">②</div>
+            <div class="panel blue" data-panel="3">③</div>
+            <div class="panel blue" data-panel="4">④</div>
+            <div class="panel blue" data-panel="5">⑤</div>
+            <div class="panel blue" data-panel="6">⑥</div>
+        </div>
+        
+        <div class="controls">
+            <div style="margin-bottom: 15px;">
+                <label>初期状態を設定してください：</label>
+            </div>
+            <div class="select-grid">
+                <div class="select-row">
+                    <select id="panel1" onchange="updatePanels()">
+                        <option value="blue">①青</option>
+                        <option value="yellow">①黄</option>
+                        <option value="red">①赤</option>
+                    </select>
+                    <select id="panel2" onchange="updatePanels()">
+                        <option value="blue">②青</option>
+                        <option value="yellow">②黄</option>
+                        <option value="red">②赤</option>
+                    </select>
+                </div>
+                <div class="select-row">
+                    <select id="panel3" onchange="updatePanels()">
+                        <option value="blue">③青</option>
+                        <option value="yellow">③黄</option>
+                        <option value="red">③赤</option>
+                    </select>
+                    <select id="panel4" onchange="updatePanels()">
+                        <option value="blue">④青</option>
+                        <option value="yellow">④黄</option>
+                        <option value="red">④赤</option>
+                    </select>
+                </div>
+                <div class="select-row">
+                    <select id="panel5" onchange="updatePanels()">
+                        <option value="blue">⑤青</option>
+                        <option value="yellow">⑤黄</option>
+                        <option value="red">⑤赤</option>
+                    </select>
+                    <select id="panel6" onchange="updatePanels()">
+                        <option value="blue">⑥青</option>
+                        <option value="yellow">⑥黄</option>
+                        <option value="red">⑥赤</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button-row">
+                <button onclick="solvePuzzle()">解法を求める</button>
+            </div>
+        </div>
+        
+        <div class="result" id="result">
+            <p>初期状態を設定して「解法を求める」ボタンを押してください。</p>
+            <p><strong>ルール:</strong> 連続で同じパネルはタップできません。</p>
+        </div>
+    </div>
+
+    <script>
+        // 色の順番: blue -> yellow -> red -> blue
+        const colorOrder = ['blue', 'yellow', 'red'];
+        
+        // 隣接関係の定義
+        const adjacency = {
+            1: [2, 3],
+            2: [1, 4],
+            3: [1, 5],
+            4: [2, 6],
+            5: [3, 6],
+            6: [4, 5]
+        };
+        
+        function getNextColor(color) {
+            const index = colorOrder.indexOf(color);
+            return colorOrder[(index + 1) % 3];
+        }
+        
+        function updatePanels() {
+            for (let i = 1; i <= 6; i++) {
+                const select = document.getElementById(`panel${i}`);
+                const panel = document.querySelector(`[data-panel="${i}"]`);
+                const color = select.value;
+                panel.className = `panel ${color}`;
+            }
+        }
+        
+        function getCurrentState() {
+            const state = {};
+            for (let i = 1; i <= 6; i++) {
+                const select = document.getElementById(`panel${i}`);
+                state[i] = select.value;
+            }
+            return state;
+        }
+        
+        function applyTap(state, panel) {
+            const newState = { ...state };
+            const targets = adjacency[panel];
+            targets.forEach(target => {
+                newState[target] = getNextColor(newState[target]);
+            });
+            return newState;
+        }
+        
+        function stateToString(state) {
+            return `${state[1]},${state[2]},${state[3]},${state[4]},${state[5]},${state[6]}`;
+        }
+        
+        function isAllSameColor(state) {
+            const colors = Object.values(state);
+            return colors.every(color => color === colors[0]);
+        }
+        
+        function solvePuzzle() {
+            const initialState = getCurrentState();
+            const result = document.getElementById('result');
+            
+            // 既に全て同じ色の場合
+            if (isAllSameColor(initialState)) {
+                result.innerHTML = '<div class="success">既に全てのパネルが同じ色です！</div>';
+                return;
+            }
+            
+            // BFS で最短解を探索
+            const queue = [{ state: initialState, path: [], lastTap: null }];
+            const visited = new Set([stateToString(initialState)]);
+            
+            while (queue.length > 0) {
+                const { state, path, lastTap } = queue.shift();
+                
+                // 各パネルをタップしてみる
+                for (let panel = 1; panel <= 6; panel++) {
+                    // 連続で同じパネルはタップできない
+                    if (panel === lastTap) {
+                        continue;
+                    }
+                    
+                    const newState = applyTap(state, panel);
+                    const newPath = [...path, panel];
+                    
+                    if (isAllSameColor(newState)) {
+                        // 解が見つかった
+                        displaySolution(newPath, newState);
+                        return;
+                    }
+                    
+                    const stateStr = stateToString(newState);
+                    if (!visited.has(stateStr) && newPath.length < 15) { // 制約が厳しくなったので15手まで拡張
+                        visited.add(stateStr);
+                        queue.push({ state: newState, path: newPath, lastTap: panel });
+                    }
+                }
+            }
+            
+            result.innerHTML = '<div class="no-solution">15手以内での解法が見つかりませんでした。より複雑な解法が必要かもしれません。</div>';
+        }
+        
+        function displaySolution(path, finalState) {
+            const result = document.getElementById('result');
+            const finalColor = Object.values(finalState)[0];
+            const colorNames = { blue: '青', yellow: '黄', red: '赤' };
+            
+            let html = `<div class="success">解法が見つかりました！ 最終的に全て${colorNames[finalColor]}色になります。</div>`;
+            html += `<h3>タップする順番（${path.length}手）：</h3>`;
+            
+            path.forEach((panel, index) => {
+                html += `<div class="step">ステップ ${index + 1}: パネル${panel}をタップ</div>`;
+            });
+            
+            result.innerHTML = html;
+        }
+        
+        // 初期化
+        updatePanels();
+    </script>
+</body>
+</html>
