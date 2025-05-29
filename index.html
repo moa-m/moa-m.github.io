@@ -211,7 +211,6 @@
         
         <div class="result" id="result">
             <p>初期状態を設定して「解法を求める」ボタンを押してください。</p>
-            <p><strong>ルール:</strong> 連続で同じパネルはタップできません。</p>
         </div>
     </div>
 
@@ -304,14 +303,14 @@
                     }
                     
                     const stateStr = stateToString(newState);
-                    if (!visited.has(stateStr) && newPath.length < 15) { // 制約が厳しくなったので15手まで拡張
+                    if (!visited.has(stateStr) && newPath.length < 30) {
                         visited.add(stateStr);
                         queue.push({ state: newState, path: newPath, lastTap: panel });
                     }
                 }
             }
             
-            result.innerHTML = '<div class="no-solution">15手以内での解法が見つかりませんでした。より複雑な解法が必要かもしれません。</div>';
+            result.innerHTML = '<div class="no-solution">解法が見つかりませんでした。初期設定を見直してください。</div>';
         }
         
         function displaySolution(path, finalState) {
